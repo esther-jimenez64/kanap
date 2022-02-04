@@ -56,15 +56,7 @@ let aver = document.getElementById("addToCart")
     };
 
     let panier = JSON.parse(localStorage.getItem("productos"));
-    let foundproduct = panier.find(p => p_id == product._id); // je crois que tu as juste mal écris product._id, il me semble qu'il te manque "_" donc, product.id => product._id
-    console.log(foundproduct);
-   if(!foundproduct){
-      foundproduct.quantity++;
-
-   }else{
-    product.quantity = 0;
-    panier.push(newStudente);
-   }
+   
     
 
     if (!panier)

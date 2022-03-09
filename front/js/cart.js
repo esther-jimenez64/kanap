@@ -10,32 +10,35 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
   fetch("http://localhost:3000/api/products/"+kanape.id)       /* requéte api + congonatation du id du kanape récuperer dans local storage */
   .then(response => response.json())                           /*réponse en json */
   .then(products => {                                          /*function flécher sur la réponse du fetch */
-                                                              
-    function Nouveautotal(number,quantité){                      /*fonction qui recalcule le prix et la*/                                          
-        totalprice -= allprice;                                  /*total quantité en fonction de ce qui est changer par l'utilisateur*/
-        allprice = parseInt(number) * parseInt(products.price); 
-        totalprice += allprice;
-        totalQuantity -= parseInt(quantité);
-        totalQuantity += parseInt(number);
-        kanape.quantidad = number;
-        let divQuantity = document.getElementById('totalQuantity');
-        divQuantity.textContent =  totalQuantity;
-        let divPrice = document.getElementById('totalPrice');
-        divPrice.textContent = totalprice;   
-    }                                                                     /*erreur le prix n'est pas au localstorage cette interdi */
+   
+      function calculeTotalLocalStorage(){                         /*fonction qui calcule le total quantité du local storage et le prix du produit */
+        allprice = parseInt(kanape.quantidad) * parseInt(products.price); /*la quantié du localSorage multiplier par le prix du kanape*/
+        totalprice += allprice;                                          /*on ajoute on total de la page le prix du kanape*/
+        allquantité = parseInt(kanape.quantidad);                      /*la quantité du kanape est égale a kanape quantidad présent dans le localS*/
+        totalQuantity += allquantité;                                  /*quantité total de la page panier on lui incrémente quantité total d'un/*                                                              /*kanape*/
+      }
 
-    function calculeTotalLocalStorage(){                                /*fonction qui calcule le total quantité et prix du local storage */
-      allprice = parseInt(kanape.quantidad) * parseInt(products.price); /*la quantié du localSorage multiplier par le prix du kanape*/
-      totalprice += allprice;                                          /*le prix total de la page panier c'est le prix multiplier par la quantité*/
-      allquantité = parseInt(kanape.quantidad);                      /*la quantité du kanape est égale a kanape quantidad présent dans le localS*/
-      totalQuantity += allquantité;                                  /*quantité total de la page panier on lui incrémente quantité total d'un/*                                                              /*seul kanape*/
-    }
+     /*fonction qui recalcule le prix et la quantité total de la page panier*/                                                          
+    function Nouveautotal(number,quantité){/* paramettre 1 est égale a la nouvelle quantité et le 2ème à  la quantité ancienne*/
+        totalprice -= allprice;                                  /*le prix total actuelle de la page -le prix d'un kanape */
+        allprice = parseInt(number) * parseInt(products.price);  /*le prix d'un kanape recalculer avec le nouvelle quantité fois le prix*/
+        totalprice += allprice;                                 /* le prix total de la page on lui ajoute le nouveaux prix du kanpe*/
+        totalQuantity -= parseInt(quantité);                    /* la quntité total de la page moins la quantité deja présente du kanape*/
+        totalQuantity += parseInt(number);                      /* la quntité total de la page on lui ajoute la nouvelle quantité*/
+        kanape.quantidad = number;                              /*on ajoute la nouvelle quantité à kanape quantidad*/
+        let divQuantity = document.getElementById('totalQuantity'); /*récupére la div qui affiche la quantité */
+        divQuantity.textContent =  totalQuantity;                   /*et on attribue un text à la div qui est totalquantity*/
+        let divPrice = document.getElementById('totalPrice');       /*récupére la div qui affiche le prix*/
+        divPrice.textContent = totalprice;                          /*et on attribue un text à la div qui est total price*/  
+    }                                                                    
+
+  
 
     calculeTotalLocalStorage(); /*appele de ma function calculeLocalStoragetotal*/
 
     let cartitem = document.getElementById('cart__items');                /*récupération de la div qui englobe section card kanape"*/
     const article = document.createElement('article');                    /*création de l'article*/ 
-    article.setAttribute(`class`, `.cart__item`);                         /* injectent la class .cart_item a la constante arcticle*/
+    article.setAttribute(`class`, `cart__item`);                         /* injectent la class .cart_item a la constante arcticle*/
     cartitem.appendChild(article);                                        /* injectent variable article en tant que fils de cartitem*/
 
     const test = document.createElement('div');                           /*création de la div qui contient l'image du kanape*/
@@ -43,14 +46,14 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
     article.appendChild(test);                                            /*injectant variable test en tant que fils d'article*/
  
     const image = document.createElement('img');                          /*création de l'elément image const image*/
-    image.setAttribute(`src`, `${products.imageUrl}`);                    /*injectent l'atribut src avec en valeur l'image du kanape*/
+    image.setAttribute(`src`, products.imageUrl);                    /*injectent l'atribut src avec en valeur l'image du kanape*/
     image.setAttribute('alt', `Photographie d'un canapé`);                /*injectent l'atribut alt avec en valeur */
     test.appendChild(image);                                              /*injectant variable image en tant que fils de la const test*/
 
     const contentitem = document.createElement('div');                    /*création de la div cart_item_content const contentitem*/  
     contentitem.setAttribute(`class`, `cart__item__content`);             /*injectant la class .cart_item_content à la constante contentitem */
     article.appendChild(contentitem);                                     /*injectant la const contentitem en tant que fils de la const article*/
-
+  
     const description = document.createElement('div');                      /*création de la div cart_item_descreption const description*/  
     description.setAttribute(`class`, `cart__item__content__description`);  /*injectant la class cart__item__content__description*/
     contentitem.appendChild(description);                                   /*injectant description en tant que fils de contentitem*/
@@ -69,7 +72,7 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
 
     const setting = document.createElement('div');                         
     setting.setAttribute(`class`, `cart__item__content__settings`);         /*création de la div cart__item__content__settings  const seeting*/ 
-    article.appendChild(setting);                                           /*injectant seeting en tant que fils d'article*/
+    contentitem.appendChild(setting);                                           /*injectant seeting en tant que fils  contentitem*/
 
     const quantity = document.createElement('div');                             /*création de la div quantity const quantity*/  
     quantity.setAttribute(`class`, `cart__item__content__settings__quantity`);  /*injectant la class .cart_item.... à la constante quantity*/
@@ -89,12 +92,12 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
 
     const deletecart = document.createElement('div');                           /*création de la div delete const deletecart*/ 
     deletecart.setAttribute(`class`, `cart__item__content__settings__delete`);   /*injectant la class cart..settingdelete à deletecart avec*/
-    article.appendChild(deletecart);                                        /*setAttribute injectant deletecart en tant que fils de article*/     
+    contentitem.appendChild(deletecart);                                        /*setAttribute injectant deletecart en tant que fils de  contentitem*/     
 
-    const suprime = document.createElement('p');                             /*création de l'elément p const suprime*/                 
-    suprime.textContent = `Supprimer`;                                       /*injectant le texte supprimer avec textcontent*/
-    suprime.setAttribute(`class`, `eleteItem`);                              /*injectant suprime en tant que fils de deletecart*/
-    deletecart.appendChild(suprime);
+    const suprimme = document.createElement('p');                             /*création de l'elément p const suprime*/                 
+    suprimme.textContent = `Supprimer`;                                       /*injectant le texte supprimer avec textcontent*/
+    suprimme.setAttribute(`class`, `deleteItem`);                              /*injectant suprime en tant que fils de deletecart*/
+    deletecart.appendChild(suprimme);
 
     let divPrice = document.getElementById('totalPrice');                     /*récup de la div totalPrice variable divPrice */                
     divPrice.textContent = totalprice;                                        /*injectant le prix total de la page panier avec textcontent*/
@@ -104,33 +107,36 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
 
     let panier = JSON.parse(localStorage.getItem('productos'));               /*récup kanap du local storage*/            
     input.addEventListener('change', (event) => {                             /*écoute sur l'input quantité ce qu'édite les utilisateur*/
-      Nouveautotal(event.target.value,kanape.quantidad);                      /*fonction nouveautotal qui prend le changement de l'input*/
-      panier[i].quantidad = event.target.value;               /*ciblé l'élements selectionné dans le panier lui attribué le changement de l'input*/
+      Nouveautotal(event.target.value,kanape.quantidad);                  /*fonction nouveautotal qui prend le changement de l'input et l'ancien*/
+      panier[i].quantidad = event.target.value;               /*atribué au panier récup du LS la quantité changer de l'input*/
       localStorage.setItem("productos", JSON.stringify(panier));/*envoie du panier au local storage pour enregistrer les modification de quantité*/
     });
         
-    var selection = suprime.closest("article");                   /*variable Selection qui contien l'article le plus proche du bouton suprimer*/
-    suprime.addEventListener("click",() =>{                       /*écoute du click sur le bouton suprimer */
+    var selection = suprimme.closest("article");                   /*variable Selection qui contien l'article le plus proche du bouton suprimer*/
+    suprimme.addEventListener("click",() =>{                       /*écoute du click sur le bouton suprimer */
       selection.remove();                                        /*function à exécuter dans ce cas suprimer dans le dom l'article le plus proche*/
-      panier.splice(i);                                         /*suprimer du panier la position du  kanape en questiont*/
-      Nouveautotal("0",kanape.quantidad);                      /*ajout à la function du nouveautotal 0 en quantité après suprimation du kanape*/
+      panier.splice(i);                                  /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
+      Nouveautotal("0",kanape.quantidad);             /*appel  à la function du nouveautotal injecte nouvelle quantité 0 et l'ancienne*/
       localStorage.setItem("productos", JSON.stringify(panier)); /*envois de tout ces changements au localstorage*/     
-    });     
+    });    
   })
+  .catch(error => { 
+    console.log('impossible de contacter avec le server');
+  }); 
 })
 
 let formo = document.getElementsByTagName('input');                            /*récupération de tou les input DE LA PAGE*/
 
 formo[4].addEventListener('change', function(){ validEmail(this); });          /*écoute de ce que viens tapper l'utilisateur sur le form email*/
 const validEmail =function(inputemail){                                      /*création d'une const qui contient une fonction pour validé le form*/
-  let emailRegexp = /[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2}$/gm  /*variable qui contient le regex pour validé l'email*/
+  let emailRegexp = /[a-zA-Z0-9-.-_]+[@]{1}[a-zA-Z0-9-.-_]+[.]{1}[a-z]{2,6}$/gm  /*variable qui contient le regex pour validé l'email*/
   let testemail = emailRegexp.test(inputemail.value);                       /*variable testemail qui test le regex sur la value de l'input email*/
   let reponse = document.getElementById('emailErrorMsg')                  /* variable réponse qui récupére le id pour afficher le message d'error*/
   if(testemail) {                                                         /*condition if else sur le test regex du formulaire email*/
     reponse.textContent = "Email valide";                                 /*si le regex est respécter alors le texte de réponse sera email valide*/
     return true;                                                         
   }else if(inputemail.value.trim() === ""){                              /*sinon si la value d'email est sans espaces blanc vide alors*/
-    reponse.textContent = 'le champ et vide';                            /*le message d'erreur sera le champ et vide*/
+    reponse.textContent = 'le champ est vide';                            /*le message d'erreur sera le champ et vide*/
     return false;                                                       
   }else{                                                                 /*sinon si le regex n'est pas respécter alors*/
     reponse.textContent =  "Email non valide";                           /*le message d'erreur sera email non valide*/
@@ -174,7 +180,8 @@ const validlastname =function(inputelast){                                 /*cr�
 
 formo[2].addEventListener('change', function() { validadress(this); });  /*écoute de ce que viens tapper l'utilisateur sur le form Adresse*/
 const validadress =function(inputeadress){                               /*création d'une const qui contient une fonction pour validé le form*/
-  let regexadress =  /([a-zéèàâêï ]{2,}\s{0,1})(\d{0,3}){0,1}\S{2,}?/ig  /*variable qui contient le regex pour validé l'Adresse*/
+  let regexadress =  /([a-zéèâêï ]{2,}\s{0,1})$/g
+   /*variable qui contient le regex pour validé l'Adresse*/
   let testeadress = regexadress.test(inputeadress.value);               /*variable testeAdress qui test le regex sur la value de l'input Adress*/
   let reponseadress = document.getElementById('addressErrorMsg')        /* variable réponse qui récupére le id pour afficher le message d'error*/
   if(testeadress){                                                      /*condition if else sur le test regex du formulaire Adress*/
@@ -209,6 +216,7 @@ const validcity =function(inputecity){                                 /*créati
   };                                      /***       Fin D'écoute form Ville                ***/
   /*récup de la div bouton commander*/            /*function sur l'écoute du click et enléver le refreh de la page automatique preventdefault*/
  document.getElementById("order").addEventListener("click", function(event){event.preventDefault();
+   
     if(validcity(document.getElementById("city")) == true && validfn(document.getElementById("firstName")) == true  && validlastname(document.getElementById("lastName")) == true && validadress(document.getElementById("address")) == true && validEmail(document.getElementById("email")) == true){                                                    /*si l'id des formulaires return true */
     let cart = JSON.parse(localStorage.getItem('productos'));  /*alors création varibale cart qui recup le panier localstorage*/
     let products =[];                                          /* création tableau product */
@@ -234,8 +242,12 @@ fetch("http://localhost:3000/api/products/order", {     /*réquete fetch méthod
       })
     .then(res => res.json())                                           /*réponse du fetch */
     .then(data => {                                                    /*data represente la reponse du fetch */
-    window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*/
-    localStorage.clear();}               /*nettoyage du localstorage pour qu'au retour au panier le panier soit vide car on viens de commander */
+    if(JSON.parse(localStorage.getItem('productos')).length == 0 ){ /*vérifi si le panier est vide*/
+      alert('Votre panier est vide !');  
+   }if(JSON.parse(localStorage.getItem('productos')).length >= 1){ /*si le panier contient au moins 1 élements ou plus*/
+      window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*/
+      localStorage.clear();}/*nettoyage du localstorage pour qu'au retour au panier le panier soit vide*/                              
+    }       
   )}
 }); 
                 /**** fin de l'ecoute bouton commander    ***/

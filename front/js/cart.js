@@ -92,36 +92,36 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
 
     const deletecart = document.createElement('div');                           /*création de la div delete const deletecart*/ 
     deletecart.setAttribute(`class`, `cart__item__content__settings__delete`);   /*injectant la class cart..settingdelete à deletecart avec*/
-    contentitem.appendChild(deletecart);                                        /*setAttribute injectant deletecart en tant que fils de  contentitem*/     
+    contentitem.appendChild(deletecart);                    /*setAttribute injectant deletecart en tant que fils de  contentitem*/     
 
     const suprimme = document.createElement('p');                             /*création de l'elément p const suprime*/                 
     suprimme.textContent = `Supprimer`;                                       /*injectant le texte supprimer avec textcontent*/
-    suprimme.setAttribute(`class`, `deleteItem`);                              /*injectant suprime en tant que fils de deletecart*/
+    suprimme.setAttribute(`class`, `deleteItem`);                             /*injectant suprime en tant que fils de deletecart*/
     deletecart.appendChild(suprimme);
 
-    let divPrice = document.getElementById('totalPrice');                     /*récup de la div totalPrice variable divPrice */                
-    divPrice.textContent = totalprice;                                        /*injectant le prix total de la page panier avec textcontent*/
+    let divPrice = document.getElementById('totalPrice');              /*récup de la div totalPrice variable divPrice */                
+    divPrice.textContent = totalprice;                                   /*injectant le prix total de la page panier avec textcontent*/
  
-    let divQuantity= document.getElementById('totalQuantity');                /*récup de la div totalQuantity variable divQuantity */     
-    divQuantity.textContent =  totalQuantity;                                 /*injectant la quantité total de la page panier avec textcontent*/
+    let divQuantity= document.getElementById('totalQuantity');              /*récup de la div totalQuantity variable divQuantity */     
+    divQuantity.textContent =  totalQuantity;                     /*injectant la quantité total de la page panier avec textcontent*/
 
        
     input.addEventListener('change', (event) => {                             /*écoute sur l'input quantité ce qu'édite les utilisateur*/
      panier = JSON.parse(localStorage.getItem('productos'));               /*récup kanap du local storage*/    
-     let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors); 
+     let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors); /*récupération de la position*/
       Nouveautotal(event.target.value,kanape.quantidad);                  /*fonction nouveautotal qui prend le changement de l'input et l'ancien*/
       panier[index].quantidad = event.target.value;               /*atribué au panier récup du LS la quantité changer de l'input*/
       localStorage.setItem("productos", JSON.stringify(panier));/*envoie du panier au local storage pour enregistrer les modification de quantité*/
     });
         
-    var selection = suprimme.closest("article");                   /*variable Selection qui contien l'article le plus proche du bouton suprimer*/
+    var selection = suprimme.closest("article");        /*variable Selection qui contien l'article le plus proche du bouton suprimer*/
     suprimme.addEventListener("click",() =>{                       /*écoute du click sur le bouton suprimer */
     panier = JSON.parse(localStorage.getItem('productos'));
-      let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors);
-      panier.splice(index,1);                                  /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
+      let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors);/*récupération de la position*/
+      panier.splice(index,1);                   /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
       Nouveautotal("0",kanape.quantidad);             /*appel  à la function du nouveautotal injecte nouvelle quantité 0 et l'ancienne*/
       localStorage.setItem("productos", JSON.stringify(panier)); /*envois de tout ces changements au localstorage*/    
-      selection.remove();                                        /*function à exécuter dans ce cas suprimer dans le dom l'article le plus proche*/ 
+      selection.remove();                            /*function à exécuter dans ce cas suprimer dans le dom l'article le plus proche*/ 
     });     
   })
   .catch(error => {                                            /*erreur possible et alert*/
@@ -249,11 +249,9 @@ fetch("http://localhost:3000/api/products/order", {     /*réquete fetch méthod
       })
     .then(res => res.json())                                           /*réponse du fetch */
     .then(data => {                                                    /*data represente la reponse du fetch */
-    localStorage.clear();
-      window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*           /*nettoyage du localstorage pour qu'au retour au panier le panier soit vide car on viens de 
-      commander */                                        /*est nous passons  à la page panier*/
-      
-  })
+    localStorage.clear();/*nettoyage du localstorage pour qu'au retour au panier le panier soit vide */                                 
+    window.location = `../html/confirmation.html?id=${data.orderId}`;     
+  }) /*changement de page avec emplus les donné a envoyer au service web*    /*est nous passons  à la page panier*/
 .catch(err => {
     alert('impossible de contacter le serveur');         /*erreur possible et alert*/
 });

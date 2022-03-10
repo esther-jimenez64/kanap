@@ -1,7 +1,7 @@
+
 let panier = JSON.parse(localStorage.getItem('productos'));     /*récup du panier localStorage*/
 let totalprice = 0;                                            /*prix total de la page panier*/
 let totalQuantity = 0;                                         /*quantité total de la page panier*/
-
 
 panier.forEach(function(kanape,i) {                            /*boucle qui contient id couleur du kanape*/ 
   let allprice = 0;                                            /*prix total 1 seul kanapé*/
@@ -105,19 +105,23 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
     let divQuantity= document.getElementById('totalQuantity');                /*récup de la div totalQuantity variable divQuantity */     
     divQuantity.textContent =  totalQuantity;                                 /*injectant la quantité total de la page panier avec textcontent*/
 
-    let panier = JSON.parse(localStorage.getItem('productos'));               /*récup kanap du local storage*/            
+       
     input.addEventListener('change', (event) => {                             /*écoute sur l'input quantité ce qu'édite les utilisateur*/
+     panier = JSON.parse(localStorage.getItem('productos'));               /*récup kanap du local storage*/    
+     let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors); 
       Nouveautotal(event.target.value,kanape.quantidad);                  /*fonction nouveautotal qui prend le changement de l'input et l'ancien*/
-      panier[i].quantidad = event.target.value;               /*atribué au panier récup du LS la quantité changer de l'input*/
+      panier[index].quantidad = event.target.value;               /*atribué au panier récup du LS la quantité changer de l'input*/
       localStorage.setItem("productos", JSON.stringify(panier));/*envoie du panier au local storage pour enregistrer les modification de quantité*/
     });
         
     var selection = suprimme.closest("article");                   /*variable Selection qui contien l'article le plus proche du bouton suprimer*/
     suprimme.addEventListener("click",() =>{                       /*écoute du click sur le bouton suprimer */
-      selection.remove();                                        /*function à exécuter dans ce cas suprimer dans le dom l'article le plus proche*/
-      panier.splice(i);                                  /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
+    panier = JSON.parse(localStorage.getItem('productos'));
+      let index = panier.findIndex(elem => elem.id == kanape.id && elem.colors == kanape.colors);
+      panier.splice(index,1);                                  /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
       Nouveautotal("0",kanape.quantidad);             /*appel  à la function du nouveautotal injecte nouvelle quantité 0 et l'ancienne*/
-      localStorage.setItem("productos", JSON.stringify(panier)); /*envois de tout ces changements au localstorage*/     
+      localStorage.setItem("productos", JSON.stringify(panier)); /*envois de tout ces changements au localstorage*/    
+      selection.remove();                                        /*function à exécuter dans ce cas suprimer dans le dom l'article le plus proche*/ 
     });     
   })
   .catch(error => {                                            /*erreur possible et alert*/
@@ -217,7 +221,8 @@ const validcity =function(inputecity){                                 /*créati
   };                                      /***       Fin D'écoute form Ville                ***/
   /*récup de la div bouton commander*/            /*function sur l'écoute du click et enléver le refreh de la page automatique preventdefault*/
 
- document.getElementById("order").addEventListener("click", function(event){event.preventDefault();
+ document.getElementById("order").addEventListener("click", function (e){
+   e.preventDefault();
     if(validcity(document.getElementById("city")) == true && validfn(document.getElementById("firstName")) == true  && validlastname(document.getElementById("lastName")) == true && validadress(document.getElementById("address")) == true && validEmail(document.getElementById("email")) == true){                                                    /*si l'id des formulaires return true */
     let cart = JSON.parse(localStorage.getItem('productos'));  /*alors création varibale cart qui recup le panier localstorage*/
     let products =[];                                          /* création tableau product */
@@ -232,6 +237,7 @@ const validcity =function(inputecity){                                 /*créati
     "city": document.getElementById("city").value,
     "email": document.getElementById("email").value,
    };
+   if(products.length > 0){
 
 fetch("http://localhost:3000/api/products/order", {     /*réquete fetch méthode post*/
     method: "POST",
@@ -242,18 +248,16 @@ fetch("http://localhost:3000/api/products/order", {     /*réquete fetch méthod
         },
       })
     .then(res => res.json())                                           /*réponse du fetch */
-    .then(data => {                                                    /*data represente la reponse du fetch */;
-        if(JSON.parse(localStorage.getItem('productos')).length == 0 ){ /*vérifi si les champs sont selectionné*/
-      alert('Votre panier est vide !');  
-   }if(JSON.parse(localStorage.getItem('productos')).length >= 1){
-      window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*/
-     
-     let panierVide =[];
- localStorage.setItem("productos", JSON.stringify(panierVide));}            /*nettoyage du localstorage pour qu'au retour au panier le panier soit vide car on viens de 
+    .then(data => {                                                    /*data represente la reponse du fetch */
+    localStorage.clear();
+      window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*           /*nettoyage du localstorage pour qu'au retour au panier le panier soit vide car on viens de 
       commander */                                        /*est nous passons  à la page panier*/
       
-})
+  })
 .catch(err => {
     alert('impossible de contacter le serveur');         /*erreur possible et alert*/
 });
+    }else{
+   alert("panier vide");
+    }
 }})                          /**** fin de l'ecoute bouton commander    */

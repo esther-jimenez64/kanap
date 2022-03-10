@@ -118,12 +118,13 @@ panier.forEach(function(kanape,i) {                            /*boucle qui cont
       panier.splice(i);                                  /*suprimer du panier LC la position du  kanape en questiont et renvoie un nouveau tab*/
       Nouveautotal("0",kanape.quantidad);             /*appel  à la function du nouveautotal injecte nouvelle quantité 0 et l'ancienne*/
       localStorage.setItem("productos", JSON.stringify(panier)); /*envois de tout ces changements au localstorage*/     
-    });    
+    });     
   })
-  .catch(error => { 
-    console.log('impossible de contacter avec le server');
-  }); 
+  .catch(error => {                                            /*erreur possible et alert*/
+    alert('impossible de contacter avec le server');
+  });
 })
+
 
 let formo = document.getElementsByTagName('input');                            /*récupération de tou les input DE LA PAGE*/
 
@@ -150,13 +151,13 @@ const validfn =function(inputefn){                                     /*créati
   let testefn = regexfn.test(inputefn.value);                          /*variable testefn qui test le regex sur la value de l'input firstname*/
   let reponsefn = document.getElementById('firstNameErrorMsg')         /* variable réponse qui récupére le id pour afficher le message d'error*/
   if(testefn){                                                         /*condition if else sur le test regex du formulaire firstName*/
-      reponsefn.textContent = 'FirstName est valide';                 /*si le regex est respécter alors le texte de réponse sera firstName valide*/
+      reponsefn.textContent = 'Prénom valide';                 /*si le regex est respécter alors le texte de réponse sera firstName valide*/
       return true;
     }else if(inputefn.value.trim() === ""){                            /*sinon si la value de firstName est sans espaces blanc vide alors*/
       reponsefn.textContent = 'Le champ et vide';                      /*le message d'erreur sera le champ et vide*/
       return false;
     }else {                                                            /*sinon si le regex n'est pas respécter alors*/
-      reponsefn.textContent = 'FirstName est invalide';                /*le message d'erreur sera FirstName non valide*/
+      reponsefn.textContent = 'Prénom invalide';                /*le message d'erreur sera FirstName non valide*/
       return false;
     }
   };                                       /***       Fin D'écoute form FirstName                   ***/
@@ -215,8 +216,8 @@ const validcity =function(inputecity){                                 /*créati
     } 
   };                                      /***       Fin D'écoute form Ville                ***/
   /*récup de la div bouton commander*/            /*function sur l'écoute du click et enléver le refreh de la page automatique preventdefault*/
+
  document.getElementById("order").addEventListener("click", function(event){event.preventDefault();
-   
     if(validcity(document.getElementById("city")) == true && validfn(document.getElementById("firstName")) == true  && validlastname(document.getElementById("lastName")) == true && validadress(document.getElementById("address")) == true && validEmail(document.getElementById("email")) == true){                                                    /*si l'id des formulaires return true */
     let cart = JSON.parse(localStorage.getItem('productos'));  /*alors création varibale cart qui recup le panier localstorage*/
     let products =[];                                          /* création tableau product */
@@ -241,13 +242,18 @@ fetch("http://localhost:3000/api/products/order", {     /*réquete fetch méthod
         },
       })
     .then(res => res.json())                                           /*réponse du fetch */
-    .then(data => {                                                    /*data represente la reponse du fetch */
-    if(JSON.parse(localStorage.getItem('productos')).length == 0 ){ /*vérifi si le panier est vide*/
+    .then(data => {                                                    /*data represente la reponse du fetch */;
+        if(JSON.parse(localStorage.getItem('productos')).length == 0 ){ /*vérifi si les champs sont selectionné*/
       alert('Votre panier est vide !');  
-   }if(JSON.parse(localStorage.getItem('productos')).length >= 1){ /*si le panier contient au moins 1 élements ou plus*/
+   }if(JSON.parse(localStorage.getItem('productos')).length >= 1){
       window.location = `../html/confirmation.html?id=${data.orderId}`; /*changement de page avec emplus les donné a envoyer au service web*/
-      localStorage.clear();}/*nettoyage du localstorage pour qu'au retour au panier le panier soit vide*/                              
-    }       
-  )}
-}); 
-                /**** fin de l'ecoute bouton commander    ***/
+     
+     let panierVide =[];
+ localStorage.setItem("productos", JSON.stringify(panierVide));}            /*nettoyage du localstorage pour qu'au retour au panier le panier soit vide car on viens de 
+      commander */                                        /*est nous passons  à la page panier*/
+      
+})
+.catch(err => {
+    alert('impossible de contacter le serveur');         /*erreur possible et alert*/
+});
+}})                          /**** fin de l'ecoute bouton commander    */

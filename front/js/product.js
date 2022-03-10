@@ -68,15 +68,16 @@ let ajoutPanier = document.getElementById("addToCart")                      /*r�
       localStorage.setItem("productos", JSON.stringify(newPanier));             /*ensuite je l'envoie au local storage*/
     }
     if(document.querySelector("input").value == 0 || document.querySelector("select").value.length == 0 ){ /*vérifi si les champs sont selectionné*/
-      alert('Choisissez une quantité et une couleurs !');  
+      alert('Choisissez une quantité et une couleur !');  
    }else if(document.querySelector("input").value >= 1  && document.querySelector("select").value.length >= 1){
      /*si ils sont selectioné alors*/
-      window.location.href="./cart.html"                                         /* nous passons  à la page panier*/
-    }       
+      window.location.href="./cart.html"                    /* nous passons  à la page panier*/                      
+    }  
+    });     
   })
-  .catch(error => { 
-    alert('impossible de contacter avec le server');
-  });
+ 
+.catch(error => {               /*erreur possible et alert*/
+  alert('impossible de contacter avec le server');
 });
 
 

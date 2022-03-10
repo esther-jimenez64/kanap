@@ -32,7 +32,7 @@ products.forEach(product => {                                        /*une boucl
        
    });
 })                                                 /*Fin de la création du Dom*/ 
-.catch(error => { 
+.catch(error => {                                 /*erreur possible et alert*/
   alert('impossible de contacter avec le server');
 });
 
